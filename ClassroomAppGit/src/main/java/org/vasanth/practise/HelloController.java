@@ -25,6 +25,7 @@ import com.google.api.services.classroom.Classroom;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -64,8 +65,7 @@ public class HelloController {
      * If modifying these scopes, delete your previously saved credentials
      * at ~/.credentials/classroom.googleapis.com-java-quickstart
      */
-    private static final List<String> SCOPES =
-            Arrays.asList(ClassroomScopes.CLASSROOM_COURSES_READONLY);
+    private static final List<String> SCOPES = new ArrayList<String>(ClassroomScopes.all());
 
     static {
         try {
@@ -124,6 +124,11 @@ public class HelloController {
                 .build();
     }
 
+    public String getRoleOfUser() {
+        //TODO
+        return "ROLE";
+    }
+
     @RequestMapping("/welcome")
     public ModelAndView helloworld() throws IOException {
         com.google.api.services.classroom.Classroom service =
@@ -140,11 +145,53 @@ public class HelloController {
             System.out.println("Courses:");
             for (Course course : courses) {
                 System.out.printf("%s\n", course.getName());
+                CourseWork work = new CourseWork();
+                work.setTitle("Trail !Setting creation");
+                work.setWorkType("ASSIGNMENT");
+                work.setAlternateLink("http://www.google.com");
+                work.setDescription("");
+                work.setCreationTime("2017-05-05T18:05:05.000Z");
+                Date d = new Date().setDay(5).setMonth(4).setYear(2017);
+                TimeOfDay t = new TimeOfDay().setHours(11).setMinutes(0).setSeconds(0);
+
+                work.setDueDate(d);
+                work.setDueTime(t);
+                work.setState("PUBLISHED");
+                CourseWork reponse = service.courses().courseWork().create(course.getId(), work).execute();
+
+                break;
+                //ListTeachersResponse tresponse = service.courses().teachers().list(course.getId()).setPageSize(40).execute();
+                //System.out.println(tresponse);
+
             }
         }
+        String role = getRoleOfUser();
+        if (getRoleOfUser() == "TEACHER") {
+
+
+        }
+
         ModelAndView modelandview = new ModelAndView("HelloPage");
         modelandview.addObject("msg", "Your courses are " + courses);
         return modelandview;
+    }
+
+    public void postFollowUpAssignment(String formURL, Course course) throws IOException {
+        //TODO make this service a class object
+        com.google.api.services.classroom.Classroom service =
+                getClassroomService();
+        CourseWork work = new CourseWork();
+        // work.setCreationTime()
+        // work.getState()
+        // work.s
+        //service.courses().courseWork().create(course.getId())
+
+
+    }
+
+    public void createFollowUpForm() {
+
+
     }
 
 
