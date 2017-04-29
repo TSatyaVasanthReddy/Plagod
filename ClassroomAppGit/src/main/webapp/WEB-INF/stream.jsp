@@ -1,4 +1,3 @@
-<%@ page isELIgnored="false" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -14,6 +13,7 @@
 	<script type="text/javascript" src="postings.js"></script>
 </head>
 <body>
+	<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 	<nav class="nav_tab" role="navigation">
 		<div class="nav-icon"></div>
 		<div class="email_id"></div>
@@ -24,12 +24,14 @@
 				<div class="dark-overlay"></div>
 				<div class="header-content">
 					<h1 class="title">
+					<em>${course.getTitle}</em>
 					</h1>
 					<div class="list-Teachers">
 						<c:forEach items="${cousre.teachers}" var="teacher">
 							<div class="teacher">
 								<div class="details">
 									<img src="${teacher.ImageSrc}" class="teacher-image">
+									<div class="teacher-name">${teacher.name}</div>
 								</div>
 							</div>
 						</c:forEach>
@@ -51,7 +53,7 @@
 				<div class="tab-details" role=listitems>
 					<a href="/about.html" class="cmntdet abt nac">About</a>
 				</div>
-			</div>
+			</div>	
 		</div>
 		<div class = "contents">
 			<aside>
@@ -87,56 +89,89 @@
 				</div>
 			</aside>
 			<div class="cards">
+				<c:forEach items="cousre.posts" var="post">
 					<div class="card">
 						<div class ="card-contents">
+							<c:choose>
+								<c:when test="${post.isquestion}">
 								<div class="card-header">
 									<div class="card-type">
 										<div class="display-icon question"></div>
 									</div>
-
+									<img src ="${post.ownerImage}" class="author-image">
+									<div class="author-details">
+										<div class="author-name common">${post.ownerImage}</div>
+										<span class="dates common">
+											<span class="date">${<post class="dateAdded">`</post>}</span>
+											<span class="delete"> – Deleted</span>
+										</span>
+									</div>
 									<div class="cards-contols">
-
+										
 									</div>
 								</div>
 								<div class="card-info">
 									<div class="about-card">
 										<div class="card-instr">
+											<div class="card-deadline">${post.deadline}</div>
 											<a class="assgn-link" href="assignment">${post.title}</a>
 											<div>${post.instruction}</div>
 										</div>
 									</div>
 								</div>
+								</c:when>
+								<c:when test="${post.isassigment}">
 								<div class="card-header">
 									<div class="card-type">
 										<div class="display-icon work"></div>
 									</div>
-
-									<div class="cards-contols">
-
-									</div>
-								</div>
-								<div class="card-info">
-									<div class="about-card">
-										<div class="card-instr">
-										</div>
-									</div>
-								</div>
-								<div class="card-header">
+									<img src ="${post.ownerImage}" class="author-image">
 									<div class="author-details">
+										<div class="author-name common">${post.ownerImage}</div>
 										<span class="dates common">
+											<span class="date">${<post class="dateAdded">`</post>}</span>
 											<span class="delete"> – Deleted</span>
 										</span>
 									</div>
 									<div class="cards-contols">
-
+										
 									</div>
 								</div>
 								<div class="card-info">
 									<div class="about-card">
 										<div class="card-instr">
+											<div class="card-deadline">${post.deadline}</div>
+											<a class="assgn-link" href="assignment">${post.title}</a>
+											<div>${post.instruction}</div>
 										</div>
 									</div>
 								</div>
+								</c:when>
+								<c:otherwise>
+								<div class="card-header">
+									<img src ="${post.ownerImage}" class="author-image">
+									<div class="author-details">
+										<div class="author-name common">${post.ownerImage}</div>
+										<span class="dates common">
+											<span class="date">${<post class="dateAdded">`</post>}</span>
+											<span class="delete"> – Deleted</span>
+										</span>
+									</div>
+									<div class="cards-contols">
+										
+									</div>
+								</div>
+								<div class="card-info">
+									<div class="about-card">
+										<div class="card-instr">
+											<div class="card-deadline">${post.deadline}</div>
+											<a class="assgn-link" href="assignment">${post.title}</a>
+											<div>${post.instruction}</div>
+										</div>
+									</div>
+								</div>
+								</c:otherwise>
+							</c:choose>
 						</div>
 						<div class="card-comments">
 							<h1> Comments </h1>
@@ -178,7 +213,7 @@
 		</div>
 	</div>
 	<div id="assignment">
-		<form:form method="POST" class="assignment-form" action="url">
+		<form class="assignment-form" method="post" action="url">
 			<div class="form-header">
 				<div class="card-type">
 					<div class="work display-icon"></div>
@@ -187,31 +222,14 @@
 				<div class="form-close display-icon" onclick="closeassignment()"></div>
 			</div>
 			<div class="class-assign-type">
-				For
+				For 
 				<div class="class-name">sample test class</div>
 			</div>
 			<div class="form-details">
-				<table>
-					<tr>
-					    <td><form:label path ="title"> Title </form:label></td>
-					    <td><form:input path = "title" /></td>
-					</tr>
-					<tr>
-						<td><form:label path ="instruction"> Instruction </form:label></td>
-						<td><form:input path = "instruction" /></td>
-					</tr>
-					<tr>
-						<td><form:label path ="due"> Due </form:label></td>
-						<td><form:input path = "due" /></td>
-					</tr>
-					<tr>
-						<td><form:label path ="topic"> Topic </form:label></td>
-						<td><form:input path = "topic" /></td>
-					</tr>
- 				<!input type="text" name="title" placeholder="Title" required>
-				<!input type="text" name="instruction" placeholder="Instruction (optional)">
-				<!div class="due-date"Due<!input type="date" name="due"></div>
-				<!div class="form-topic"Topic<!/div>
+				<input type="text" name="title" placeholder="Title" required>
+				<input type="text" name="instruction" placeholder="Instruction (optional)">
+				<div class="due-date">Due<input type="date" name="due"></div>
+				<div class="form-topic">Topic</div>
 				<input type="checkbox" name="plagiarism" id="plagiarism" onclick="toogleplagiarism()">do you want plagiarism check?<br>
 				<input type="url" name="plagiarismUrl" id="plagiarismUrl">
 			</div>
@@ -219,12 +237,8 @@
 				<div class="file-uploads"></div>
 				<div class="form-actions"></div>
 			</div>
-			<tr>
-				<td colspan ="2"
-					<input type="submit" name="submit">
-				</td>
-			</tr>
-		</form:form>
+			<input type="submit" name="submit">
+		</form>
 	</div>
 </body>
 </html>

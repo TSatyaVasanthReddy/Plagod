@@ -3,6 +3,7 @@ package org.vasanth.practise;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.api.services.classroom.model.Date;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,18 +26,21 @@ import com.google.api.services.classroom.Classroom;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.net.URL;
+import java.sql.Time;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Controller
 public class HelloController {
     /**
      * Application name.
      */
+    public static com.google.api.services.classroom.Classroom service;
     private static final String APPLICATION_NAME =
             "Classroom API Java Quickstart";
-
+    private static String cid = "";
     /**
      * Directory to store user credentials for this application.
      */
@@ -89,7 +93,6 @@ public class HelloController {
                 Quickstart.class.getResourceAsStream("/client_secret.json");
         GoogleClientSecrets clientSecrets =
                 GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
-        System.out.println("*1**********************************************$$$$$$$$$$$$");
 
         // Build flow and trigger user authorization request.
         GoogleAuthorizationCodeFlow.Builder flowBuilder =
@@ -99,7 +102,6 @@ public class HelloController {
                         .setAccessType("offline");
 
 
-        System.out.println("2***********************************************$$$$$$$$$$$$\n" + SCOPES + HTTP_TRANSPORT);
         GoogleAuthorizationCodeFlow flow = flowBuilder.build();
         LocalServerReceiver LSR = new LocalServerReceiver.Builder().setPort(6543).build();
         Credential credential = new AuthorizationCodeInstalledApp(
@@ -124,14 +126,12 @@ public class HelloController {
                 .build();
     }
 
-    public String getRoleOfUser() {
-        //TODO
-        return "ROLE";
-    }
-
+    /**
+     * LANDING PAGE that displays the courses in the user's google classroom account
+     */
     @RequestMapping("/welcome")
     public ModelAndView helloworld() throws IOException {
-        com.google.api.services.classroom.Classroom service =
+         service =
                 getClassroomService();
 
         // List the first 10 courses that the user has access to.
@@ -139,61 +139,71 @@ public class HelloController {
                 .setPageSize(10)
                 .execute();
         List<Course> courses = response.getCourses();
+       // courses.get(1).
+
         if (courses == null || courses.size() == 0) {
             System.out.println("No courses found.");
         } else {
             System.out.println("Courses:");
             for (Course course : courses) {
                 System.out.printf("%s\n", course.getName());
-                CourseWork work = new CourseWork();
-                work.setTitle("Trail !Setting creation");
-                work.setWorkType("ASSIGNMENT");
-                work.setAlternateLink("http://www.google.com");
-                work.setDescription("");
-                work.setCreationTime("2017-05-05T18:05:05.000Z");
-                Date d = new Date().setDay(5).setMonth(4).setYear(2017);
-                TimeOfDay t = new TimeOfDay().setHours(11).setMinutes(0).setSeconds(0);
-
-                work.setDueDate(d);
-                work.setDueTime(t);
-                work.setState("PUBLISHED");
-                CourseWork reponse = service.courses().courseWork().create(course.getId(), work).execute();
-
+                cid = course.getId();
                 break;
-                //ListTeachersResponse tresponse = service.courses().teachers().list(course.getId()).setPageSize(40).execute();
-                //System.out.println(tresponse);
 
             }
         }
-        String role = getRoleOfUser();
-        if (getRoleOfUser() == "TEACHER") {
-
-
-        }
 
         ModelAndView modelandview = new ModelAndView("HelloPage");
-        modelandview.addObject("msg", "Your courses are " + courses);
+        modelandview.addObject("msg", courses);
         return modelandview;
     }
+    /**
+     * create The assignment by getting information from the form where the user enters required details
+     */
+    @RequestMapping("/createAssignment")
+    public ModelAndView createAction() throws IOException, ParseException {
+        String courseId ="";
+        int day =29, day_followup =29;
+        int month=04, month_followup=04;
+        int year=2017, year_followup=2017;
+        int hr=21, hr_followup =22; int min=30, min_followup=10 ; int sec=0, sec_followup=0;
+        Date date = new Date().setDay(day).setMonth(month).setYear(year);
+        TimeOfDay t = new TimeOfDay().setHours(hr).setMinutes(min).setSeconds(sec);
 
-    public void postFollowUpAssignment(String formURL, Course course) throws IOException {
-        //TODO make this service a class object
-        com.google.api.services.classroom.Classroom service =
-                getClassroomService();
+
         CourseWork work = new CourseWork();
-        // work.setCreationTime()
-        // work.getState()
-        // work.s
-        //service.courses().courseWork().create(course.getId())
+        work.setDueDate(date).setDueTime(t);
+        work.setTitle("Title 2");
+        work.setWorkType("ASSIGNMENT");
+        work.setAlternateLink("d");
+        work.setDescription("Trail 2");
+        work.setState("PUBLISHED");
+        CourseWork reponse = service.courses().courseWork().create(cid, work).execute();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
+        String dateInString = day+"-"+month+"-"+year+" "+hr+":"+min+":"+sec;
+        java.util.Date date_java = sdf.parse(dateInString);
+        service.courses().courseWork().create(cid, work).execute();
+        System.out.println(" Successfully posted");
 
+        Date date_followup = new Date().setDay(day_followup).setMonth(month_followup).setYear(year_followup);
+        TimeOfDay time_followup = new TimeOfDay().setHours(hr_followup).setMinutes(min_followup).setSeconds(sec_followup);
 
+        CourseWork work_followup = new CourseWork();
+        work_followup.setDueDate(date_followup).setDueTime(time_followup);
+        work_followup.setTitle("Followup Title 2");
+        work_followup.setWorkType("ASSIGNMENT");
+        work_followup.setAlternateLink("");
+        work_followup.setDescription("This is a followup assignment 2. Click the URL to begin. Hurry!");
+        postFollowupOn(cid,work_followup,date_java);
+        return null;
     }
 
-    public void createFollowUpForm() {
+    public void postFollowupOn(String courseId, CourseWork workf, java.util.Date d2) throws ParseException {
+       Timer timer = new Timer();
+        System.out.println(" Successfully scheduling");
 
+        timer.schedule(new ScheduleAssignment(service, courseId, workf ),  d2.getTime()-System.currentTimeMillis());
 
     }
-
-
 }
 

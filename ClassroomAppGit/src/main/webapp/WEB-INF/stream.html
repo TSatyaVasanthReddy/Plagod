@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0, user-scalable=0,width=device-width">
+	<title>Class Name</title>
+	<link rel="stylesheet" type="text/css" href="stream.css">
+	<link rel="stylesheet" type="text/css" href="themes/red.css">
+
+	<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet" type="text/css">
+	<link href="https://fonts.googleapis.com/css?family=Amatic+SC:700&amp;subset=latin,vietnamese,latin-ext,cyrillic,greek,cyrillic-ext,greek-ext" rel="stylesheet" type="text/css">
+	<link href="https://fonts.googleapis.com/css?family=Product+Sans" rel="stylesheet" type="text/css">
+	<script type="text/javascript" src="postings.js"></script>
+</head>
+<body>
+	<nav class="nav_tab" role="navigation">
+		<div class="nav-icon"></div>
+		<div class="email_id"></div>
+	</nav>
+	<div class="main">
+		<div class="headers">
+			<div class="TIB" style="background-image: url(https://lh5.googleusercontent.com/-4rBKomUQ4KQ/VN0osh8ymNI/AAAAAAAAAXk/yvR8PJRLJyA/w984-h209-no/26_insect.jpg); background-position: left top; background-repeat: no-repeat;">
+				<div class="dark-overlay"></div>
+				<div class="header-content">
+					<h1 class="title">
+					<em>Class title</em>
+					</h1>
+					<div class="list-Teachers">
+						<div class="teacher">
+							<div class="details">
+								<img src="https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg?sz=40" class="teacher-image">
+								<div class="teacher-name">Vamshi</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+			</div>
+			<div class="tabs" role="list">
+				<div class="tab-details" role=listitems>
+					<a href="/stream.html" class="cmntdet strm ac">Stream</a>
+				</div>
+				
+			</div>	
+		</div>
+		<div class = "contents">
+			<aside>
+				<div class="oneweekwork">
+					<div class="asidecards">
+						<div class="owwcontents">
+
+
+						</div>
+					</div>
+				</div>
+				<div class="topics">
+					<div class="asidecards"></div>
+				</div>
+				<div class="stream">
+					<div class="asidecards"></div>
+				</div>
+				<div class="topics">
+					<div class="asidecards"></div>
+				</div>
+			</aside>
+			<div class="cards">
+				<div class="card">
+					<div class ="card-contents">
+						<div class="card-header">
+							<div class="card-type">
+								<div class="display-icon work"></div>
+							</div>
+							<img src ="https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg?sz=32" class="author-image">
+							<div class="author-details">
+								<div class="author-name common">Vamshi</div>
+								<span class="dates common">
+									<span class="date">Mar 29</span>
+									<span class="delete"> – Deleted</span>
+								</span>
+							</div>
+							<div class="cards-contols">
+								
+							</div>
+						</div>
+						<div class="card-info">
+							<div class="about-card">
+								<div class="card-instr">
+									<div class="card-deadline"> Time</div>
+									<a class="assgn-link" href="assignment">Assingnment Name</a>
+									<div>inst1<br>inst2<br>inst3</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="card-comments">
+						<h1> Comments </h1>
+					</div>
+				</div>
+			</div>
+			<div class="newpost">
+				<div class="post">
+					
+					
+					<div class="assignment">
+						<div class="post-content">Create assignment</div>
+						<div class="assignment-icon post-btn" onclick="openassignment()">
+							<div class="display-icon"></div>
+						</div>
+					</div>
+
+				</div>
+				<div class="new">
+					<div class="display-icon"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="assignment">
+		<form class="assignment-form" method="post" action="url">
+			<div class="form-header">
+				<div class="card-type">
+					<div class="work display-icon"></div>
+				</div>
+				<div class="form-name">Assignment</div>
+				<div class="form-close display-icon" onclick="closeassignment()"></div>
+			</div>
+			<div class="class-assign-type">
+				For 
+				<div class="class-name">sample test class</div>
+			</div>
+			<div class="form-details">
+				<input type="text" name="title" placeholder="Title" required>
+				<input type="text" name="instruction" placeholder="Instruction (optional)">
+				<div class="due-date">Due1<input type="date" name="due"></div>
+				<div class="form-topic">Topic</div>
+				<input type="checkbox" name="plagiarism" id="plagiarism" onclick="toogleplagiarism()">do you want plagiarism check?<br>
+				<input type="url" name="plagiarismUrl" id="plagiarismUrl">
+				<div class="due-date">Due1<input type="date" name="due"></div>
+				
+			</div>
+			<div class="form-files">
+				<div class="file-uploads"></div>
+				<div class="form-actions"></div>
+			</div>
+			<input type="submit" name="submit">
+		</form>
+	</div>
+</body>
+</html>
