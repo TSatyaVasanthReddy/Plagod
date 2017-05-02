@@ -102,7 +102,7 @@ public class HelloController {
         GoogleAuthorizationCodeFlow.Builder flowBuilder =
                 new GoogleAuthorizationCodeFlow.Builder(
                         HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
-                        .setDataStoreFactory(DATA_STORE_FACTORY)
+                        .setDataStoreFactory(DATA_STORE_FACTORY).setApprovalPrompt("force")
                         .setAccessType("offline");
 
 
@@ -161,25 +161,56 @@ public class HelloController {
         //TODO Need to add courses
        // model.put("coursevar",course);
         model.put("userData", new UserData());
-        return "HelloPage";
+        return "index";
     }
-
+    @RequestMapping("/langing")
+    public String landing(Map<String, Object> model){
+        return "langing";
+    }
 
     @RequestMapping(value = "/formcheck", method = RequestMethod.POST)
     public String addStudent(@ModelAttribute("UserData")UserData ud,
-                             ModelMap model) throws ParseException {
+                             ModelMap model) throws ParseException, IOException {
 
-        System.out.println("Got the form");
-        System.out.println(ud.courseId);
-        System.out.println(ud.due);
-        System.out.println(ud.due_time);
-        System.out.println(stringToDate(ud.due));
-        System.out.println(stringToTime(ud.due_time));
+        try {
+            System.out.println("Got the form");
+            System.out.println(ud.courseId);
+            System.out.println(ud.due);
+            System.out.println(ud.due_time);
+            System.out.println(stringToDate(ud.due));
+            System.out.println(stringToTime(ud.due_time));
+            Date asdate = stringToDate(ud.due);
+            TimeOfDay astime = stringToTime(ud.due_time);
+            CourseWork work = new CourseWork();
+            work.setDueDate(stringToDate(ud.due)).setDueTime(stringToTime(ud.due_time));
+            work.setTitle(ud.getTitle());
+            work.setWorkType("ASSIGNMENT");
+            work.setAlternateLink("no link");
+            work.setDescription(ud.getInstruction());
+            work.setState("PUBLISHED");
+            //service.courses().courseWork().create(cid, work).execute();
+            service.courses().courseWork().create(ud.getCourseId(), work).execute();
+            System.out.println(" Successfully posted");
 
-        model.put("hi","hi vasanth");
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy HH:mm:ss");
+            String dateInString = asdate.getDay() + "-" + asdate.getMonth() + "-" + asdate.getYear() + " " + astime.getHours() + ":" + astime.getMinutes() + ":" + "00";
+            java.util.Date date_java = sdf.parse(dateInString);
+            CourseWork work_followup = new CourseWork();
+            work_followup.setDueDate(stringToDate(ud.getPlgDate())).setDueTime(stringToTime(ud.getPlgTime()));
+            work_followup.setTitle("Followup of : " + ud.getTitle());
+            work_followup.setWorkType("ASSIGNMENT");
+            work_followup.setAlternateLink("");
+            work_followup.setDescription("Click the below URL and hurry!!" + ud.getPlagiarismUrl());
+            postFollowupOn(cid, work_followup, date_java);
+
+            model.put("hi", "hi vasanth");
 
 
-        return "HelloPage2";
+            return "success_page";
+        }
+        catch (Exception e){
+            return "failure_page";
+        }
     }
 public Date stringToDate(String d) throws ParseException {
     DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
@@ -221,7 +252,7 @@ public Date stringToDate(String d) throws ParseException {
         work.setDescription("Trail 2");
         work.setState("PUBLISHED");
         CourseWork reponse = service.courses().courseWork().create(cid, work).execute();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy HH:mm:ss");
         String dateInString = day+"-"+month+"-"+year+" "+hr+":"+min+":"+sec;
         java.util.Date date_java = sdf.parse(dateInString);
         service.courses().courseWork().create(cid, work).execute();
@@ -243,6 +274,10 @@ public Date stringToDate(String d) throws ParseException {
     public void postFollowupOn(String courseId, CourseWork workf, java.util.Date d2) throws ParseException {
        Timer timer = new Timer();
         System.out.println(" Successfully scheduling");
+        System.out.println(" Delay "+d2.getTime());
+        System.out.println(" Delay "+System.currentTimeMillis());
+
+        System.out.println(" Delay "+(d2.getTime()-System.currentTimeMillis()));
 
         timer.schedule(new ScheduleAssignment(service, courseId, workf ),  d2.getTime()-System.currentTimeMillis());
 

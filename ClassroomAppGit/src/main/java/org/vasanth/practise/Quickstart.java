@@ -91,7 +91,7 @@ public class Quickstart {
         GoogleAuthorizationCodeFlow.Builder flowBuilder =
                 new GoogleAuthorizationCodeFlow.Builder(
                         HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
-                        .setDataStoreFactory(DATA_STORE_FACTORY)
+                        .setDataStoreFactory(DATA_STORE_FACTORY).setApprovalPrompt("force")
                         .setAccessType("offline");
 
 
