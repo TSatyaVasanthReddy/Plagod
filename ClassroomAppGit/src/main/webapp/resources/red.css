@@ -1,0 +1,23 @@
+body
+{
+	background-color: #fde3ec;
+}
+.tabs
+{
+	background-color: #880e4f;
+}
+.contents
+{
+}
+.ucalink:hover,.asidecards a:hover
+{
+	color: #ad1457;
+}
+.card-type,.post-btn,.new,.form-header
+{
+	background-color: #ad1457;
+}
+.post-btn:hover,.new:hover
+{
+	background-color: #cd3477;
+}

@@ -6,7 +6,10 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.api.services.classroom.model.Date;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 import com.google.api.client.auth.oauth2.Credential;
@@ -28,6 +31,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.sql.Time;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -39,7 +43,7 @@ public class HelloController {
      */
     public static com.google.api.services.classroom.Classroom service;
     private static final String APPLICATION_NAME =
-            "Classroom API Java Quickstart";
+            "PlagoD";
     private static String cid = "";
     /**
      * Directory to store user credentials for this application.
@@ -130,7 +134,7 @@ public class HelloController {
      * LANDING PAGE that displays the courses in the user's google classroom account
      */
     @RequestMapping("/welcome")
-    public ModelAndView helloworld() throws IOException {
+    public String helloworld(Map<String, Object> model) throws IOException {
          service =
                 getClassroomService();
 
@@ -148,15 +152,54 @@ public class HelloController {
             for (Course course : courses) {
                 System.out.printf("%s\n", course.getName());
                 cid = course.getId();
+                model.put("coursevar",courses);
+
                 break;
 
             }
         }
-
-        ModelAndView modelandview = new ModelAndView("HelloPage");
-        modelandview.addObject("msg", courses);
-        return modelandview;
+        //TODO Need to add courses
+       // model.put("coursevar",course);
+        model.put("userData", new UserData());
+        return "HelloPage";
     }
+
+
+    @RequestMapping(value = "/formcheck", method = RequestMethod.POST)
+    public String addStudent(@ModelAttribute("UserData")UserData ud,
+                             ModelMap model) throws ParseException {
+
+        System.out.println("Got the form");
+        System.out.println(ud.courseId);
+        System.out.println(ud.due);
+        System.out.println(ud.due_time);
+        System.out.println(stringToDate(ud.due));
+        System.out.println(stringToTime(ud.due_time));
+
+        model.put("hi","hi vasanth");
+
+
+        return "HelloPage2";
+    }
+public Date stringToDate(String d) throws ParseException {
+    DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+    java.util.Date dd = df.parse(d);
+    System.out.println(" D " + dd);
+    Date dd2 = new Date().setDay(dd.getDate()).setMonth(1+dd.getMonth()).setYear(1900+dd.getYear());
+    return dd2;
+
+}
+    public TimeOfDay stringToTime(String t) throws ParseException {
+        SimpleDateFormat format24 = new SimpleDateFormat("HH:mm");
+        java.util.Date dd = format24.parse(t);
+
+        System.out.println(" T "+dd);
+
+        TimeOfDay t2 = new TimeOfDay().setHours(dd.getHours()).setMinutes(dd.getMinutes());
+        return t2;
+    }
+
+
     /**
      * create The assignment by getting information from the form where the user enters required details
      */
@@ -169,7 +212,6 @@ public class HelloController {
         int hr=21, hr_followup =22; int min=30, min_followup=10 ; int sec=0, sec_followup=0;
         Date date = new Date().setDay(day).setMonth(month).setYear(year);
         TimeOfDay t = new TimeOfDay().setHours(hr).setMinutes(min).setSeconds(sec);
-
 
         CourseWork work = new CourseWork();
         work.setDueDate(date).setDueTime(t);

@@ -4,7 +4,9 @@ function openannouncement() {
 function closeannouncement() {
 	document.getElementById("announcement").style.display = "none";
 }
-function openassignment() {
+function openassignment(courseId) {
+	document.getElementById("courseId").value=courseId;
+	console.log(courseId);
 	document.getElementById("assignment").style.display = "block";
 }
 function closeassignment() {
@@ -17,14 +19,18 @@ function closequestion() {
 	document.getElementById("question").style.display = "none";
 }
 function toogleplagiarism() {
-	var x = document.getElementById("plagiarism");
+	var x = document.getElementById("plagiarismCheck");
 	if(x.checked) {
-		document.getElementById("plagiarismUrl").style.display="inline-block";
+		document.getElementById("plagiarism").style.display="inline-block";
 		document.getElementById("plagiarismUrl").required =true;
+		document.getElementById("plgDate").required =true;
+		document.getElementById("plgTime").required =true;
 	}
 	else {
-		document.getElementById("plagiarismUrl").style.display="none";
+		document.getElementById("plagiarism").style.display="none";
 		document.getElementById("plagiarismUrl").required =false;
+		document.getElementById("plgDate").required =true;
+		document.getElementById("plgTime").required =true;
 	}
 }
 // function openreuse() {
